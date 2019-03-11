@@ -13,3 +13,12 @@ class Image(models.Model):
   posted_on = models.DateTimeField(auto_now_add=True)
   profile = models.ForeignKey(User, blank=True,on_delete = models.CASCADE)
   details = models.ForeignKey(Profile, null=True)
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        exclude =['likes','profile','details']
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['image', 'commenter']
