@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Profile(models.Model):
   pic = models.ImageField(upload_to='images/',blank=True)
