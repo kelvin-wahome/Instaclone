@@ -62,3 +62,11 @@ def comment(request,image_id):
         form = CommentForm()
 
     return render(request, 'comment.html', locals())
+
+
+@login_required(login_url='/accounts/login/')
+def follow(request,user_id):
+    users = User.objects.get(id = user_id)
+    follow = Follow.objects.add_follower(request.user,users)
+
+    return redirect('indexpage')
