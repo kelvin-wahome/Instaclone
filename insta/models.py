@@ -1,14 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
+from tinymce.models import HTMLField
 from django.db.models.signals import post_save
-from friendship.models import Friend,Follow,Block
+from friendship.models import Friend, Follow, Block
 
 
 class Profile(models.Model):
     pic = models.ImageField(upload_to='images/', blank=True)
-    user = models.OneToOneField(
-        User, null=True, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE, related_name="profile")
     bio = models.TextField()
 
     @receiver(post_save, sender=User)
@@ -18,20 +18,21 @@ class Profile(models.Model):
 
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
-            instance.profile.save()
-            post_save.connect(save_user_profile, sender=User)
+        instance.profile.save()
+
+    post_save.connect(save_user_profile, sender=User)
 
     def __str__(self):
-            return self.bio
+        return self.bio
 
     def save_profile(self):
-            self.save()
+        self.save()
 
     def update_profile(self):
-            self.update()
+        self.update()
 
     def delete_profile(self):
-            self.delete()
+        self.delete()
 
     @classmethod
     def search_profile(cls, name):
@@ -43,10 +44,10 @@ class Profile(models.Model):
         user_profile = Profile.objects.get(user=id)
         return user_profile
 
-        @classmethod
-        def get_profile_by_username(cls, user):
-            profile_info = cls.objects.filter(user__contains=user)
-            return profile_info
+    @classmethod
+    def get_profile_by_username(cls, user):
+        profile_info = cls.objects.filter(user__contains=user)
+        return profile_info
 
 
 class Image(models.Model):
@@ -72,16 +73,49 @@ class Image(models.Model):
     def update_caption(self):
         self.update()
 
+    @classmethod
+    def get_images_on_profile(cls, profile):
+        images = Image.objects.filter(profile__pk=profile)
+        return images
+
+    @property
+    def count_likes(self):
+        likes = self.likes.count()
+        return likes
+
+    @property
+    def count_comments(self):
+        comments = self.comments.count()
+        return comments
+
 
 class Comment(models.Model):
-    image = models.ForeignKey(
-        Image, blank=True, on_delete=models.CASCADE, related_name='comment')
+    image = models.ForeignKey(Image, blank=True, on_delete=models.CASCADE, related_name='comment')
     commenter = models.ForeignKey(User, blank=True)
     comment_itself = models.TextField()
 
+    def delete_comment(self):
+        self.delete()
+
+    def save_comment(self):
+        self.save()
+
+    @classmethod
+    def get_comments_on_image(cls, id):
+        the_comments = Comment.objects.filter(image__pk=id)
+        return the_comments
+
+    def __str__(self):
+        return self.comment_itself
+
 
 class Likes(models.Model):
-    who_liked = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='likes')
+    who_liked = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     liked_image = models.ForeignKey(
-        Image, on_delete=models.CASCADE, related_name='likes')
+    Image, on_delete=models.CASCADE, related_name='likes')
+
+    def save_like(self):
+        self.save()
+
+    def __str__(self):
+        return self.who_liked
