@@ -49,6 +49,22 @@ def profile(request):
         form=ProfileForm()
 
     return render(request, 'profile/new_profile.html', locals())
+    
+@login_required(login_url='/accounts/login/')
+def view_profile(request,id):
+    searched_user=User.objects.filter(id=id).first()
+    profile = searched_user
+    details = Profile.get_profile_by_id(id)
+    images = Image.get_images_on_profile(id)
+
+    users = User.objects.get(id=id)
+    followers = len(Follow.objects.followers(users))
+    following = len(Follow.objects.following(users))
+    app_users=User.objects.all()
+    guys_following=Follow.objects.following(request.user)
+
+    return render(request,'profile/user_profile.html',locals())
+
 
 @login_required(login_url='/accounts/login/')
 def search_user(request):
