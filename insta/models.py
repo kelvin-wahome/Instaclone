@@ -18,6 +18,20 @@ class Profile(models.Model):
   post_save.connect(save_user_profile, sender=User)
 
 
+  def __str__(self):
+    return self.bio
+
+  def save_profile(self):
+    self.save()
+
+  def update_profile(self):
+    self.update()
+
+  def delete_profile(self):
+    self.delete()
+
+
+
 class Image(models.Model):
   name = models.CharField(max_length=50)
   image = models.ImageField(upload_to = 'images/',blank=True)
