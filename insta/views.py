@@ -2,6 +2,8 @@ from django.shortcuts import render,redirect
 from .models import Image,Profile,Comment,Likes
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from friendship.models import Friend, Follow, Block
+
 
 @login_required(login_url='/accounts/login/')
 def index(request):
