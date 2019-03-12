@@ -79,3 +79,11 @@ def unfollow(request,user_id):
     follow = Follow.objects.remove_follower(request.user,users)
 
     return redirect('indexpage')
+
+def like(request, image_id):
+    current_user = request.user
+    liked_image=Image.objects.get(id=image_id)
+    new_like,created= Likes.objects.get_or_create(who_liked=current_user, liked_image=liked_image)
+    new_like.save()
+
+    return redirect('indexpage')
