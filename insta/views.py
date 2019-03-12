@@ -12,4 +12,3 @@ def index(request):
     people = Follow.objects.following(request.user)
     profile = User.objects.all()
     return render(request,'index.html',locals())
-# Create your views here.
