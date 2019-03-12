@@ -36,3 +36,29 @@ def search_user(request):
     else:
         message = "You haven't searched for any term"
         return render(request, 'search.html', {"message":message})
+
+
+def comment(request,image_id):
+    current_user=request.user
+    image = Image.objects.get(id=image_id)
+    profile_user = User.objects.get(username=current_user)
+    the_comments = Comment.objects.all()
+    print(the_comments)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment_itself = form.save(commit=False)
+            comment_itself.image = image
+            comment_itself.commenter = request.user
+
+            comment_itself.save()
+
+            print(the_comments)
+
+
+        return redirect(index)
+
+    else:
+        form = CommentForm()
+
+    return render(request, 'comment.html', locals())
