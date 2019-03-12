@@ -35,6 +35,21 @@ def add_new_image(request):
 
     return render(request,'post.html',locals())
 
+@login_required(login_url='/login')
+def profile(request):
+    current_user = request.user
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST,request.FILES)
+        if form.is_valid():
+            profile =form.save(commit=False)
+            profile.user = current_user
+            profile.save()
+    else:
+        form=ProfileForm()
+
+    return render(request, 'profile/new_profile.html', locals())
+
 @login_required(login_url='/accounts/login/')
 def search_user(request):
     """
