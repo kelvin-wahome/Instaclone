@@ -70,3 +70,12 @@ def follow(request,user_id):
     follow = Follow.objects.add_follower(request.user,users)
 
     return redirect('indexpage')
+
+
+@login_required(login_url='/accounts/login/')
+def unfollow(request,user_id):
+    users = User.objects.get(id = user_id)
+
+    follow = Follow.objects.remove_follower(request.user,users)
+
+    return redirect('indexpage')
